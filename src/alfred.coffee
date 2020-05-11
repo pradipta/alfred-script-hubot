@@ -19,8 +19,9 @@
 
 module.exports = (robot) ->
     tag = 'check-servers'
+    require('dotenv').config()
     mysql = require 'mysql'
-    url = 'mysql://root:ueducation@localhost:3306/alfred'
+    url = 'mysql://'+process.env.ALFREDDBUSERNAME+':'+process.env.ALFREDDBPASSWORD+'@'+process.env.ALFREDDBHOST+':'+process.env.ALFREDDBPORT+'/'+process.env.ALFREDDBNAME
     serviceTable = 'service'
     instanceTable = 'instance'
 
