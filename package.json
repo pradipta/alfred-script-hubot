@@ -4,7 +4,7 @@
   "description": "A chatbot for instance reservation",
   "main": "index.coffee",
   "scripts": {
-    "test": "mocha"
+    "test": "echo \"No test specified\""
   },
   "repository": {
     "type": "git",
