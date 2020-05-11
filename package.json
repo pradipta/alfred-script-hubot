@@ -1,0 +1,19 @@
+{
+  "name": "alfred-script-hubot",
+  "version": "1.0.0",
+  "description": "A chatbot for instance reservation",
+  "main": "index.coffee",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pradiptasarma/alfred-script-hubot.git"
+  },
+  "author": "pradipta.sarma",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/pradiptasarma/alfred-script-hubot/issues"
+  },
+  "homepage": "https://github.com/pradiptasarma/alfred-script-hubot#readme"
+}
