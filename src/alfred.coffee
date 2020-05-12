@@ -35,7 +35,7 @@ module.exports = (robot) ->
         instance = requestArray[3]
         sqlQuery = "SELECT * FROM service_instance_mapping where service_name='"+service+"'"
         if !instance
-            res.reply("400! Instance name has not been specified")
+            console.log("Instance name has not been specified")
         else
             sqlQuery = "SELECT * FROM service_instance_mapping where service_name='"+service+"' and instance_name='"+instance+"'"
         load_data = () ->
