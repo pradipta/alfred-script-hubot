@@ -20,4 +20,4 @@ Then add **alfred-script-hubot** to your `external-scripts.json`:
 
 ## NPM Module
 
-https://www.npmjs.com/package/ WILL ADD LATER
+https://www.npmjs.com/package/alfred-script-hubot
