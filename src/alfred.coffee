@@ -109,7 +109,7 @@ module.exports = (robot) ->
                                                     res.send("Database couldn't be updated. Please contact my developer.")
                                                 else
                                                     res.reply("Your booking for instance: "+instance+" is now over.")
-                            , duration*60*100);
+                            , duration*60*1000);
         load_data()
 
 
