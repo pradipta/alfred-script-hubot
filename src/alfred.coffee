@@ -6,8 +6,9 @@
 #
 # Configuration:
 #   None
-# 
+#
 # Commands:
+#   hubot ping
 #   hubot check <service-name>
 #   hubot check <service-name> <instance-name>
 #   hubot reserve <service-name> <instance-name> <duration>
@@ -29,6 +30,9 @@ module.exports = (robot) ->
 
     conn = mysql.createConnection(url)
     
+    robot.respond /ping/i, (res) ->
+        res.send("PONG")
+
     robot.respond /check (.*)/, (res) ->
         requestArray = res.envelope.message.text.split(" ")
         service = requestArray[2]
@@ -68,7 +72,7 @@ module.exports = (robot) ->
         if isNaN(duration)
             res.reply("400! Duration should be a NUMERIC VALUE (minutes)")
             return
-    
+
         sqlQuery = "SELECT * FROM service_instance_mapping where service_name='"+service+"' and instance_name='"+instance+"'"
         load_data = () ->
             conn.query sqlQuery, (err, rows) ->
@@ -87,21 +91,27 @@ module.exports = (robot) ->
                     conn.query sqlUpdateQuery, (err, rows) ->
                         if err
                             res.reply("500! Failed to reserve.")
-                        else   
+                        else
                             res.reply("Reserved successfully. Check and verify maybe?")
                             setTimeout(() ->
-                                console.log("Inside timeout method: ",instance, service, occupiedBy)
-                                console.log("This is running")
-                                resetQuery = "UPDATE service_instance_mapping set available = 1, reserved_at = null, booked_by = null, duration = null, comments = null where service_name='"+service+"' and instance_name='"+instance+"'"
-                                console.log(resetQuery)
-                                conn.query resetQuery, (err, rows) ->
+                                checkIfStillBookedQuery =  "SELECT available from service_instance_mapping where service_name='"+service+"' and instance_name='"+instance+"'"
+                                conn.query checkIfStillBookedQuery, (err, rows) ->
                                     if err
-                                        res.send("Database couldn't be updated. Please contact my developer.")
+                                        console.log("Manually released")
                                     else
-                                        res.reply("Your booking for instance: "+instance+" is now over.")
-                                console.log("update end")    
-                            , duration*60*1000);                    
+                                        if rows[0].available == 1
+                                            console.log("Released manually")
+                                        else
+                                            resetQuery = "UPDATE service_instance_mapping set available = 1, reserved_at = null, booked_by = null, duration = null, comments = null where service_name='"+service+"' and instance_name='"+instance+"'"
+                                            console.log(resetQuery)
+                                            conn.query resetQuery, (err, rows) ->
+                                                if err
+                                                    res.send("Database couldn't be updated. Please contact my developer.")
+                                                else
+                                                    res.reply("Your booking for instance: "+instance+" is now over.")
+                            , duration*60*100);
         load_data()
+
 
     robot.respond /release (.*)/, (res) ->
         requestArray = res.envelope.message.text.split(" ")
@@ -110,7 +120,7 @@ module.exports = (robot) ->
         if !instance
             res.reply("400! Instance name has not been specified")
             return
-    
+
         sqlQuery = "SELECT * FROM service_instance_mapping where service_name='"+service+"' and instance_name='"+instance+"'"
         load_data = () ->
             conn.query sqlQuery, (err, rows) ->
@@ -128,13 +138,13 @@ module.exports = (robot) ->
                             res.reply("403! The instance wasn't booked by you, you cannot release it.")
                             return
                     date = new Date()
-                    
+
                     sqlUpdateQuery = "UPDATE service_instance_mapping set available = 1, reserved_at = null, booked_by = null, duration = null, comments = null where service_name='"+service+"' and instance_name='"+instance+"'"
                     console.log(sqlUpdateQuery)
                     conn.query sqlUpdateQuery, (err, rows) ->
                         if err
                             console.log(err)
                             res.reply("500! Failed to reserve.")
-                        else   
+                        else
                             res.reply("Released successfully. Check and verify maybe?")
         load_data()
